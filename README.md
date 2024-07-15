@@ -3,6 +3,7 @@
 B站@[ammlhguhj](https://space.bilibili.com/9911299)
 
 [项目开源链接](https://gitee.com/surgar2022/fabric-eCert-trace-ipfs)
+
 2024/07/15
 ## 介绍
 
@@ -19,16 +20,25 @@ B站@[ammlhguhj](https://space.bilibili.com/9911299)
 ## 项目介绍
 
 **采用的技术栈**：Fabric V2.5、Gin、Vue.js、Mysql
+
 **开发工具**：1Panel, CentOS, MySQL, VSCode, Docker
+
 **技术架构**：Hyperledger Fabric V2.5
+
 
 ## 项目背景
 **指导方针**：国务院办公厅推动政务服务标准化、规范化、便利化。
+
 **政策背景**：加快实现政务服务线上线下一体化。
+
 **电子证照应用需求**：现存问题包括数据共享不及时、监管缺失、电子证照真实性验证困难。
+
 **传统存储方式**：中心化存储、数据易篡改、存储量大。
+
 **解决方案**：利用区块链技术实现数据溯源与存储。
+
 **目标**：实现跨部门、跨区域电子证照互认共享。
+
 
 ## 项目工作与技术实现
 
@@ -71,20 +81,17 @@ sudo systemctl start firewalld
 ![输入图片说明](pic/%E5%9B%BE2%20mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8CphpMyadmin%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F.jpg)
 
 ![输入图片说明](pic/%E5%9B%BE3%20%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF.jpg)
-
-```
 确保配置mysql为：
-127.0.0.1
-3337
-名称 sugar20240713
-用户名 sugar20240713
-密码 sugar20240713
+```sh
+#127.0.0.1
+#3337
+#名称 sugar20240713
+#用户名 sugar20240713
+#密码 sugar20240713
 ```
-
 
 ### 克隆项目
 ```sh
-cd 04_部署
 git clone https://gitee.com/surgar2022/fabric-eCert-trace-ipfs
 cd fabric-eCert-trace-ipfs
 ```
@@ -116,11 +123,17 @@ jq --version
 ```
 ### 防火墙设置
 在 1Panel 中放行以下 TCP 端口：8080, 9090, 9528, 3306，3337。
+
 1Panel防火墙放行端口
+
 3337： (mysql)	
+
 9528：web前端，
+
 9090 web后端，
+
 8080 区块链浏览器
+
 ![输入图片说明](pic/%E5%9B%BE4%20%E9%98%B2%E7%81%AB%E5%A2%99%E8%AE%BE%E7%BD%AE.jpg)
 
 ### 启动区块链网络
@@ -138,8 +151,6 @@ curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/ins
 
 在 `fabric-trace/blockchain/network` 目录下执行：
 ```sh
-# 下载 Fabric Docker 镜像（仅在首次使用时执行）
-./install-fabric.sh -f 2.5.6 d
 # 启动区块链网络
 ./start.sh
 ```
