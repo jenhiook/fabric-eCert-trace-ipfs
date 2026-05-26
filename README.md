@@ -22,7 +22,7 @@
 
 ## 快速启动（一键脚本）
 
-```bash
+```
 # 确保 Docker 已启动
 sudo systemctl start docker
 
