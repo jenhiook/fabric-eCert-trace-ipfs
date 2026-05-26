@@ -10,16 +10,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <a target="_blank" href="https://gitee.com/surgar2022/fabric-eCert-trace-ipfs">
-            <el-dropdown-item>项目地址</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://mp.weixin.qq.com/s/S93kdLT-bib5bbvLjPYKng">
-            <el-dropdown-item>TrueTechLabs 公众号</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://space.bilibili.com/9911299">
-            <el-dropdown-item>TrueTechLabs B站</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided @click.native="logout">
+          <el-dropdown-item @click.native="logout">
             <span style="display:block;">登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>

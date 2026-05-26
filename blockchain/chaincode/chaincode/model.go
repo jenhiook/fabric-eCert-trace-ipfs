@@ -1,96 +1,79 @@
 package chaincode
 
-/*
-定义用户结构体
-用户ID
-用户类型
-实名认证信息哈希,包括用户注册的姓名、身份证号、手机号、注册平台同意协议签名的哈希
-电子证照列表
-*/
+// ==================== 用户结构体 ====================
 type User struct {
-	UserID       string   `json:"userID"`
-	UserType     string   `json:"userType"`
-	RealInfoHash string   `json:"realInfoHash"`
-	FruitList    []*Fruit `json:"fruitList"`
+	UserID       string         `json:"userID"`
+	UserType     string         `json:"userType"`
+	RealInfoHash string         `json:"realInfoHash"`
+	CertList     []*Certificate `json:"fruitList"` // JSON标签保持兼容
 }
 
-/*
-定义电子证照结构体
-溯源码
-个人用户输入
-政务部门输入
-企业组织输入
-技术支撑实体输入
-*/
-type Fruit struct {
-	Traceability_code string        `json:"traceability_code"`
-	Farmer_input      Farmer_input  `json:"farmer_input"`
-	Factory_input     Factory_input `json:"factory_input"`
-	Driver_input      Driver_input  `json:"driver_input"`
-	Shop_input        Shop_input    `json:"shop_input"`
+// ==================== 电子证照主结构体 ====================
+type Certificate struct {
+	TraceabilityCode string           `json:"traceability_code"`
+	PersonalInput    PersonalInput    `json:"farmer_input"`    // 个人用户
+	GovtInput        GovtInput        `json:"factory_input"`   // 政务部门
+	EnterpriseInput  EnterpriseInput  `json:"driver_input"`    // 企业组织
+	TechSupportInput TechSupportInput `json:"shop_input"`      // 技术支撑实体
 }
 
-// HistoryQueryResult structure used for handling result of history query
+// ==================== 历史查询结果 ====================
 type HistoryQueryResult struct {
-	Record    *Fruit `json:"record"`
-	TxId      string `json:"txId"`
-	Timestamp string `json:"timestamp"`
-	IsDelete  bool   `json:"isDelete"`
+	Record    *Certificate `json:"record"`
+	TxId      string       `json:"txId"`
+	Timestamp string       `json:"timestamp"`
+	IsDelete  bool         `json:"isDelete"`
 }
 
-/*
-个人用户
-电子证照的溯源码，一物一码，主打高端市场（自动生成）
-电子证照类型、身份证号、性别、联系电话、个人用户名称
-*/
-type Farmer_input struct {
-	Fa_fruitName   string `json:"fa_fruitName"`
-	Fa_origin      string `json:"fa_origin"`
-	Fa_plantTime   string `json:"fa_plantTime"`
-	Fa_pickingTime string `json:"fa_pickingTime"`
-	Fa_farmerName  string `json:"fa_farmerName"`
-	Fa_Txid        string `json:"fa_txid"`
-	Fa_Timestamp   string `json:"fa_timestamp"`
+// ==================== 个人用户录入 ====================
+type PersonalInput struct {
+	CertType   string `json:"fa_fruitName"`   // 证照类型
+	CertNumber string `json:"fa_origin"`      // 证照编号/身份证号
+	Gender     string `json:"fa_plantTime"`   // 性别
+	Phone      string `json:"fa_pickingTime"` // 联系电话
+	HolderName string `json:"fa_farmerName"`  // 持证人姓名
+	TxId       string `json:"fa_txid"`
+	Timestamp  string `json:"fa_timestamp"`
+	CertImage  string `json:"fa_certImage"` // 证照图片Base64
 }
 
-/*
-政务部门
-部门名称、部门代码、地址、负责人、联系电话
-*/
-type Factory_input struct {
-	Fac_productName     string `json:"fac_productName"`
-	Fac_productionbatch string `json:"fac_productionbatch"`
-	Fac_productionTime  string `json:"fac_productionTime"`
-	Fac_factoryName     string `json:"fac_factoryName"`
-	Fac_contactNumber   string `json:"fac_contactNumber"`
-	Fac_Txid            string `json:"fac_txid"`
-	Fac_Timestamp       string `json:"fac_timestamp"`
+// ==================== 政务部门审核 ====================
+type GovtInput struct {
+	DeptName    string `json:"fac_productName"`    // 部门名称
+	DeptCode    string `json:"fac_productionbatch"` // 部门代码
+	AuditTime   string `json:"fac_productionTime"`  // 审核时间
+	AuditorName string `json:"fac_factoryName"`     // 审核人
+	AuditResult string `json:"fac_contactNumber"`   // 审核结果
+	TxId        string `json:"fac_txid"`
+	Timestamp   string `json:"fac_timestamp"`
 }
 
-/*
-企业组织
-企业名称、企业代码、成立日期、地址、联系方式
-*/
-type Driver_input struct {
-	Dr_name      string `json:"dr_name"`
-	Dr_age       string `json:"dr_age"`
-	Dr_phone     string `json:"dr_phone"`
-	Dr_carNumber string `json:"dr_carNumber"`
-	Dr_transport string `json:"dr_transport"`
-	Dr_Txid      string `json:"dr_txid"`
-	Dr_Timestamp string `json:"dr_timestamp"`
+// ==================== 企业组织使用记录 ====================
+type EnterpriseInput struct {
+	CompanyName string `json:"dr_name"`      // 企业名称
+	CompanyCode string `json:"dr_age"`       // 统一社会信用代码
+	UsePurpose  string `json:"dr_phone"`     // 使用目的
+	UseTime     string `json:"dr_carNumber"` // 使用时间
+	Operator    string `json:"dr_transport"` // 经办人
+	TxId        string `json:"dr_txid"`
+	Timestamp   string `json:"dr_timestamp"`
 }
 
-/*
-技术支撑实体
-实体名称、服务类型、安全认证等级、地址、联系方式
-*/
-type Shop_input struct {
-	Sh_storeTime   string `json:"sh_storeTime"`
-	Sh_sellTime    string `json:"sh_sellTime"`
-	Sh_shopName    string `json:"sh_shopName"`
-	Sh_shopAddress string `json:"sh_shopAddress"`
-	Sh_shopPhone   string `json:"sh_shopPhone"`
-	Sh_Txid        string `json:"sh_txid"`
-	Sh_Timestamp   string `json:"sh_timestamp"`
+// ==================== 技术支撑实体核验 ====================
+type TechSupportInput struct {
+	EntityName    string `json:"sh_storeTime"`   // 实体名称
+	ServiceType   string `json:"sh_sellTime"`    // 服务类型
+	SecurityLevel string `json:"sh_shopName"`    // 安全认证等级
+	VerifyResult  string `json:"sh_shopAddress"` // 核验结果
+	ContactPhone  string `json:"sh_shopPhone"`   // 联系方式
+	TxId          string `json:"sh_txid"`
+	Timestamp     string `json:"sh_timestamp"`
+}
+
+// ==================== 仪表盘统计数据 ====================
+type DashboardStats struct {
+	TotalCerts      int            `json:"totalCerts"`
+	CertTypeDist    map[string]int `json:"certTypeDist"`    // 证照种类分布
+	StageDist       map[string]int `json:"stageDist"`       // 阶段分布
+	RecentActivity  []string       `json:"recentActivity"`
 }

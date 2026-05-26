@@ -96,3 +96,16 @@ func GetUsername(userID string) (username string, err error) {
 	}
 	return username, nil
 }
+
+// InsertTraceLog 插入溯源查询日志
+func InsertTraceLog(traceCode string, userID string) error {
+	_, err := db.Exec("INSERT INTO trace_log (trace_code, user_id) VALUES (?, ?)", traceCode, userID)
+	return err
+}
+
+// GetTraceCount 查询溯源次数
+func GetTraceCount() (int, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM trace_log").Scan(&count)
+	return count, err
+}

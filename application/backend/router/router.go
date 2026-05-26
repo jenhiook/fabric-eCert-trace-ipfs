@@ -1,6 +1,5 @@
 package router
 
-// 路由文件
 import (
 	con "backend/controller"
 	"backend/middleware"
@@ -11,46 +10,75 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
-
 	r := gin.Default()
-	// 解决跨域问题
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},                                       // 允许的来源
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // 允许的请求方法
-		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"}, // 允许的请求头
-		ExposeHeaders:    []string{"Content-Length"},                          // 暴露的响应头
-		AllowCredentials: true,                                                // 允许传递凭据（例如 Cookie）
-		MaxAge:           12 * time.Hour,                                      // 预检请求的有效期
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
-	// 设置静态文件目录
-	r.Static("/static", "./dist/static")
-	r.LoadHTMLGlob("dist/*.html")
+
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index.html", nil)
 	})
-	// 测试GET请求
 	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+		c.JSON(200, gin.H{"message": "pong"})
 	})
-	//注册
+
+	// 公开路由
 	r.POST("/register", con.Register)
-	//登录
 	r.POST("/login", con.Login)
-	//登出
-	r.POST("/logout", con.Logout)
-	//查询用户的类型
-	r.POST("/getInfo", middleware.JWTAuthMiddleware(), con.GetInfo)
-	//电子证照上链
-	r.POST("/uplink", middleware.JWTAuthMiddleware(), con.Uplink)
-	// 获取电子证照的上链信息
 	r.POST("/getFruitInfo", con.GetFruitInfo)
-	// 获取用户的电子证照ID列表
-	r.POST("/getFruitList", middleware.JWTAuthMiddleware(), con.GetFruitList)
-	// 获取所有的电子证照信息
-	r.POST("/getAllFruitInfo", middleware.JWTAuthMiddleware(), con.GetAllFruitInfo)
-	// 获取电子证照上链历史(溯源)
-	r.POST("/getFruitHistory", middleware.JWTAuthMiddleware(), con.GetFruitHistory)
+
+	// 需要鉴权的路由组（普通用户）
+	auth := r.Group("/")
+	auth.Use(middleware.JWTAuthMiddleware())
+	{
+		auth.POST("/logout", con.Logout)
+		auth.POST("/getInfo", con.GetInfo)
+		auth.POST("/uplink", con.Uplink)
+		auth.POST("/getFruitList", con.GetFruitList)
+		auth.POST("/getAllFruitInfo", con.GetAllFruitInfo)
+		auth.POST("/getFruitHistory", con.GetFruitHistory)
+		auth.POST("/getStats", con.GetStats)
+		auth.POST("/getDashboard", con.GetDashboard)
+		auth.POST("/govtAudit", con.GovtAudit)
+		auth.POST("/enterpriseUse", con.EnterpriseUse)
+		auth.POST("/techVerify", con.TechVerify)
+		auth.GET("/cert/:certId/history", con.GetHistory)
+		auth.GET("/cert/:certId/export", con.ExportHistory)
+		auth.POST("/userStats", con.GetUserStats)
+		// 企业端扩展功能（链上存证）
+		auth.POST("/enterprise/supplier/add", con.AddSupplierLink)
+		auth.GET("/enterprise/supplier/list", con.GetSupplierLinks)
+		auth.POST("/enterprise/event/add", con.AddComplianceEvent)
+		auth.GET("/enterprise/event/list", con.GetComplianceEvents)
+		
+		// 企业统计接口（需要登录）
+		auth.POST("/enterpriseStats", con.GetEnterpriseStats)
+		auth.GET("/enterprise/exportAll", con.ExportAllEnterpriseHistory)
+		auth.POST("/enterprise/verify", con.EnterpriseVerifyEvidence)
+		auth.POST("/upload/ipfs", con.UploadToIPFS)
+		auth.POST("/enterprise/verify/chaindata", con.VerifyChainData)
+		
+		auth.POST("/techStats", con.GetTechStats)
+		auth.POST("/tech/verify", con.TechVerifyEvidence)
+	}
+
+	// ==================== 政府端路由组 ====================
+	gov := r.Group("/gov")
+	gov.Use(middleware.JWTAuthMiddleware(), middleware.RoleCheck("政务部门"))
+	{
+		gov.GET("/cert/:certId/history", con.GovGetHistory)
+		gov.GET("/cert/:certId/auditlog", con.GovGetAuditLog)
+		gov.GET("/cert/:certId/evidence", con.GovExportEvidencePack)
+		gov.GET("/reports/audit", con.GovAuditReport)
+		//gov.POST("/verify/evidence", con.GovVerifyEvidence)
+		gov.GET("/stats", con.GovGetStats)
+	}
+
 	return r
 }

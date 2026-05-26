@@ -1,216 +1,305 @@
 <template>
   <div class="uplink-container">
-    <div style="color:#909399;margin-bottom: 30px">
-      当前用户：{{ name }};
-      用户角色: {{ userType }}
-    </div>
-    <div>
-      <el-form ref="form" :model="tracedata" label-width="80px" size="mini" style="">
-        <el-form-item v-show="userType!='个人用户'&userType!='其他相关实体'" label="溯源码:" style="width: 300px" label-width="120px">
-          <el-input v-model="tracedata.traceability_code" />
-        </el-form-item>
+    <h3>电子证照上链</h3>
+    <p>当前用户：{{ user.name }} | 角色：{{ user.role }}</p>
 
-        <div v-show="userType=='个人用户'">
-          <el-form-item label="电子证照类型:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Farmer_input.Fa_fruitName" />
-          </el-form-item>
-          <el-form-item label="身份证号:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Farmer_input.Fa_origin" />
-          </el-form-item>
-          <el-form-item label="性别:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Farmer_input.Fa_plantTime" />
-          </el-form-item>
-          <el-form-item label="联系电话:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Farmer_input.Fa_pickingTime" />
-          </el-form-item>
-          <el-form-item label="个人用户名称:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Farmer_input.Fa_farmerName" />
-          </el-form-item>
+    <div class="form-layout">
+      <!-- 左侧：证照原图上传 -->
+      <div class="upload-column">
+        <div class="upload-card">
+          <h4 class="upload-title">证照原图上传</h4>
+
+          <div class="upload-box-wrapper" @click="triggerUpload">
+            <img
+              :src="previewImage"
+              alt="证照预览"
+              class="preview-img"
+            >
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              hidden
+              @change="handleFileSelect"
+            >
+          </div>
+
+          <p class="upload-tip">点击上传证件照，支持身份证/毕业证/驾驶证等电子版</p>
         </div>
-        <div v-show="userType=='政务部门'">
-          <el-form-item label="部门名称:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Factory_input.Fac_productName" />
+      </div>
+
+      <!-- 右侧：表单 -->
+      <div class="form-column">
+        <el-form
+          ref="formRef"
+          :model="form"
+          :rules="rules"
+          label-width="130px"
+        >
+          <el-form-item label="证件类型" prop="type">
+            <el-select v-model="form.type" placeholder="请选择证件类型">
+              <el-option label="居民身份证" value="居民身份证" />
+              <el-option label="毕业证书" value="毕业证书" />
+              <el-option label="驾驶证" value="驾驶证" />
+              <el-option label="职业资格证" value="职业资格证" />
+            </el-select>
           </el-form-item>
-          <el-form-item label="部门代码:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Factory_input.Fac_productionbatch" />
+
+          <el-form-item :label="label1" prop="field1">
+            <el-input v-model="form.field1" :placeholder="placeholder1" />
           </el-form-item>
-          <el-form-item label="地址:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Factory_input.Fac_productionTime" />
+
+          <el-form-item :label="label2" prop="field2">
+            <el-select
+              v-if="form.type === '居民身份证'"
+              v-model="form.field2"
+              placeholder="性别"
+            >
+              <el-option label="男" value="男" />
+              <el-option label="女" value="女" />
+            </el-select>
+            <el-input
+              v-else
+              v-model="form.field2"
+              :placeholder="placeholder2"
+            />
           </el-form-item>
-          <el-form-item label="负责人:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Factory_input.Fac_factoryName" />
+
+          <el-form-item :label="label3" prop="field3">
+            <el-input v-model="form.field3" :placeholder="placeholder3" />
           </el-form-item>
-          <el-form-item label="联系电话:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Factory_input.Fac_contactNumber" />
+
+          <el-form-item label="持证人姓名" prop="name">
+            <el-input v-model="form.name" placeholder="请输入真实姓名" />
           </el-form-item>
-        </div>
-        <div v-show="userType=='企业组织'">
-          <el-form-item label="企业名称:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Driver_input.Dr_name" />
+
+          <el-form-item>
+            <el-button type="primary" @click="submitForm">确认上链</el-button>
           </el-form-item>
-          <el-form-item label="企业代码:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Driver_input.Dr_age" />
-          </el-form-item>
-          <el-form-item label="成立日期:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Driver_input.Dr_phone" />
-          </el-form-item>
-          <el-form-item label="地址:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Driver_input.Dr_carNumber" />
-          </el-form-item>
-          <el-form-item label="联系方式:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Driver_input.Dr_transport" />
-          </el-form-item>
-        </div>
-        <div v-show="userType=='技术支撑实体'">
-          <el-form-item label="实体名称:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Shop_input.Sh_storeTime" />
-          </el-form-item>
-          <el-form-item label="服务类型:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Shop_input.Sh_sellTime" />
-          </el-form-item>
-          <el-form-item label="安全认证等级:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Shop_input.Sh_shopName" />
-          </el-form-item>
-          <el-form-item label="地址:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Shop_input.Sh_shopAddress" />
-          </el-form-item>
-          <el-form-item label="联系方式:" style="width: 300px" label-width="120px">
-            <el-input v-model="tracedata.Shop_input.Sh_shopPhone" />
-          </el-form-item>
-        </div>
-      </el-form>
-      <span slot="footer" style="color: gray;" class="dialog-footer">
-        <el-button v-show="userType != '其他相关实体'" type="primary" plain style="margin-left: 220px;" @click="submittracedata()">提 交</el-button>
-      </span>
-      <span v-show="userType == '其他相关实体'" slot="footer" style="color: gray;" class="dialog-footer">
-        其他相关实体没有权限录入！请使用溯源功能!
-      </span>
+        </el-form>
+      </div>
+    </div>
+
+    <div v-if="traceabilityCode" class="code-display">
+      <el-alert title="上链成功！" type="info" :closable="false">
+        <template #default>
+          您的电子证照已成功上链，溯源码为：<strong>{{ traceabilityCode }}</strong>
+        </template>
+      </el-alert>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { uplink } from '@/api/trace'
 
 export default {
-  name: 'Uplink',
   data() {
     return {
-      tracedata: {
-        traceability_code: '',
-        Farmer_input: {
-          Fa_fruitName: '',
-          Fa_origin: '',
-          Fa_plantTime: '',
-          Fa_pickingTime: '',
-          Fa_farmerName: ''
-        },
-        Factory_input: {
-          Fac_productName: '',
-          Fac_productionbatch: '',
-          Fac_productionTime: '',
-          Fac_factoryName: '',
-          Fac_contactNumber: ''
-        },
-        Driver_input: {
-          Dr_name: '',
-          Dr_age: '',
-          Dr_phone: '',
-          Dr_carNumber: '',
-          Dr_transport: ''
-        },
-        Shop_input: {
-          Sh_storeTime: '',
-          Sh_sellTime: '',
-          Sh_shopName: '',
-          Sh_shopAddress: '',
-          Sh_shopPhone: ''
-        }
+      formRef: null,
+      form: {
+        type: '居民身份证',
+        field1: '',
+        field2: '',
+        field3: '',
+        name: ''
       },
-      loading: false
+      label1: '身份证号',
+      label2: '性别',
+      label3: '联系电话',
+      placeholder1: '18位身份证号',
+      placeholder2: '请选择性别',
+      placeholder3: '11位手机号',
+
+      // ✅ 修复：移除固定必填校验，控制台不再报错
+      rules: {
+        type: [{ required: true, message: '请选择证件类型', trigger: 'change' }],
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        field1: [],
+        field2: [],
+        field3: []
+      },
+
+      traceabilityCode: null,
+      previewImage: require('@/assets/camera.jpg'),
+      selectedFile: null
     }
   },
+
   computed: {
-    ...mapGetters([
-      'name',
-      'userType'
-    ])
-  },
-  methods: {
-    submittracedata() {
-      console.log(this.tracedata)
-      const loading = this.$loading({
-        lock: true,
-        text: '数据上链中...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      var formData = new FormData()
-      formData.append('traceability_code', this.tracedata.traceability_code)
-      // 根据不同的用户给arg1、arg2、arg3..赋值,
-      switch (this.userType) {
-        case '个人用户':
-          formData.append('arg1', this.tracedata.Farmer_input.Fa_fruitName)
-          formData.append('arg2', this.tracedata.Farmer_input.Fa_origin)
-          formData.append('arg3', this.tracedata.Farmer_input.Fa_plantTime)
-          formData.append('arg4', this.tracedata.Farmer_input.Fa_pickingTime)
-          formData.append('arg5', this.tracedata.Farmer_input.Fa_farmerName)
-          break
-        case '政务部门':
-          formData.append('arg1', this.tracedata.Factory_input.Fac_productName)
-          formData.append('arg2', this.tracedata.Factory_input.Fac_productionbatch)
-          formData.append('arg3', this.tracedata.Factory_input.Fac_productionTime)
-          formData.append('arg4', this.tracedata.Factory_input.Fac_factoryName)
-          formData.append('arg5', this.tracedata.Factory_input.Fac_contactNumber)
-          break
-        case '企业组织':
-          formData.append('arg1', this.tracedata.Driver_input.Dr_name)
-          formData.append('arg2', this.tracedata.Driver_input.Dr_age)
-          formData.append('arg3', this.tracedata.Driver_input.Dr_phone)
-          formData.append('arg4', this.tracedata.Driver_input.Dr_carNumber)
-          formData.append('arg5', this.tracedata.Driver_input.Dr_transport)
-          break
-        case '技术支撑实体':
-          formData.append('arg1', this.tracedata.Shop_input.Sh_storeTime)
-          formData.append('arg2', this.tracedata.Shop_input.Sh_sellTime)
-          formData.append('arg3', this.tracedata.Shop_input.Sh_shopName)
-          formData.append('arg4', this.tracedata.Shop_input.Sh_shopAddress)
-          formData.append('arg5', this.tracedata.Shop_input.Sh_shopPhone)
-          break
+    user() {
+      const storeUser = this.$store.state.user || {}
+      return {
+        name: storeUser.username || storeUser.name || 'test',
+        role: storeUser.role || '个人用户'
       }
-      uplink(formData).then(res => {
-        if (res.code === 200) {
-          loading.close()
-          this.$message({
-            message: '上链成功，交易ID：' + res.txid + '\n溯源码：' + res.traceability_code,
-            type: 'success'
-          })
-        } else {
-          loading.close()
-          this.$message({
-            message: '上链失败',
-            type: 'error'
-          })
+    }
+  },
+
+  watch: {
+    'form.type'(t) {
+      if (t === '居民身份证') {
+        this.label1 = '身份证号'
+        this.label2 = '性别'
+        this.label3 = '联系电话'
+        this.placeholder1 = '请输入18位身份证号'
+        this.placeholder2 = '请选择性别'
+        this.placeholder3 = '请输入11位手机号'
+      } else if (t === '毕业证书') {
+        this.label1 = '证书编号'
+        this.label2 = '毕业院校'
+        this.label3 = '毕业时间'
+        this.placeholder1 = '请输入证书编号'
+        this.placeholder2 = '请输入学校名称'
+        this.placeholder3 = '格式：2025-06-30'
+      } else if (t === '驾驶证') {
+        this.label1 = '驾驶证证号'
+        this.label2 = '准驾车型'
+        this.label3 = '有效期至'
+        this.placeholder1 = '请输入驾驶证号'
+        this.placeholder2 = '如 C1 B2 A1'
+        this.placeholder3 = '格式：2035-12-31'
+      } else if (t === '职业资格证') {
+        this.label1 = '资格证编号'
+        this.label2 = '工种/专业'
+        this.label3 = '发证日期'
+        this.placeholder1 = '请输入资格证号'
+        this.placeholder2 = '如：软件工程师、护士'
+        this.placeholder3 = '格式：2025-05-15'
+      }
+    }
+  },
+
+  methods: {
+    triggerUpload() {
+      this.$refs.fileInput.click()
+    },
+    handleFileSelect(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      if (!file.type.startsWith('image/')) {
+        this.$message.warning('请上传图片文件')
+        return
+      }
+      this.selectedFile = file
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        this.previewImage = event.target.result
+      }
+      reader.readAsDataURL(file)
+    },
+
+    async submitForm() {
+      // 手动校验，保留必填逻辑
+      if (!this.form.field1 || !this.form.field2 || !this.form.field3) {
+        this.$message.error('请填写完整信息！')
+        return
+      }
+      await this.$refs.formRef.validate()
+
+      const type = this.form.type
+      const f1 = this.form.field1.trim()
+      const f3 = this.form.field3.trim()
+
+      if (type === '居民身份证') {
+        if (!/^\d{17}[\dXx]$/.test(f1)) {
+          this.$message.error('身份证号必须是18位！')
+          return
         }
-      }).catch(err => {
-        loading.close()
-        console.log(err)
-      })
+        if (!/^1[3-9]\d{9}$/.test(f3)) {
+          this.$message.error('手机号必须是11位有效号码！')
+          return
+        }
+      }
+
+      if (type === '毕业证书' || type === '驾驶证' || type === '职业资格证') {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(f3)) {
+          this.$message.error('日期格式必须是：YYYY-MM-DD')
+          return
+        }
+      }
+
+      const fd = new FormData()
+      fd.append('arg1', this.form.type)
+      fd.append('arg2', this.form.field1)
+      fd.append('arg3', this.form.field2)
+      fd.append('arg4', this.form.field3)
+      fd.append('arg5', this.form.name)
+      if (this.selectedFile) {
+        fd.append('cert_image', this.selectedFile)
+      }
+
+      const res = await uplink(fd)
+      if (res.code === 200) {
+        this.traceabilityCode = res.traceability_code
+        this.$message.success(`上链成功！溯源码：${res.traceability_code}`)
+      } else {
+        this.$message.error(res.message || '上链失败')
+      }
     }
   }
 }
-
 </script>
 
-<style lang="scss" scoped>
-.uplink {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
+<style scoped>
+.uplink-container {
+  width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+}
+h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+p {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.form-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+.upload-column { flex: 1; display: flex; justify-content: center; }
+.upload-card {
+  background: #fafbfc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.upload-title { margin: 0 0 15px 0; font-size: 16px; color: #333; }
+
+.upload-box-wrapper {
+  width: 140px;
+  aspect-ratio: 3 / 4;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  margin: 0 auto;
+}
+.preview-img {
+  width: 90%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.upload-tip { margin: 12px 0 0 0; font-size: 12px; color: #999; }
+.form-column { flex: 1.5; }
+
+.code-display {
+  margin-top: 20px;
 }
 </style>
+

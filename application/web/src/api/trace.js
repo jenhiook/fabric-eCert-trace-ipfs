@@ -11,51 +11,57 @@ export function uplink(data) {
   })
 }
 
-// getFruitInfo
 export function getFruitInfo(data) {
   return request({
     url: '/getFruitInfo',
     method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
     data
   })
 }
 
-// getFruitList
-export function getFruitList(data) {
-  return request({
-    url: '/getFruitList',
-    method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
-    data
-  })
-}
-
-// getAllFruitInfo
 export function getAllFruitInfo(data) {
   return request({
     url: '/getAllFruitInfo',
     method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
     data
   })
 }
 
-// getFruitHistory
-export function getFruitHistory(data) {
+export function getStats() {
   return request({
-    url: '/getFruitHistory',
-    method: 'post',
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
-    data
+    url: '/getStats',
+    method: 'post'
   })
 }
 
+export function getFruitList() {
+  return request({
+    url: '/getFruitList',
+    method: 'post'
+  })
+}
+
+// ========== 新增：获取证照历史 ==========
+export function getHistory(certId) {
+  return request({
+    url: `/cert/${certId}/history`,
+    method: 'get'
+  })
+}
+
+// 获取当前用户的证照统计（个人用户专用）
+export function getUserStats() {
+  return request({
+    url: '/userStats',
+    method: 'post'
+  })
+}
+
+export function govtAudit(data) {
+  return request({
+    url: '/govtAudit',
+    method: 'post',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    data
+  })
+}

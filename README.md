@@ -170,7 +170,7 @@ go run main.go
 修改后端 IP，替换以下文件中的 IP 地址为您的云服务 IP：
 
 ```sh
-find . -type f -exec grep -l "107.175.32.34" {} \;
+find . -type f -exec grep -l "127.0.0.1" {} \;
 ./application/replaceip.sh
 ./application/web/.env.staging
 ./application/web/.env.development

@@ -12,6 +12,8 @@ import (
 	"github.com/hyperledger/fabric-gateway/pkg/identity"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"github.com/hyperledger/fabric-protos-go-apiv2/common"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -166,4 +168,27 @@ func loadCertificate(filename string) (*x509.Certificate, error) {
 		return nil, fmt.Errorf("failed to read certificate file: %w", err)
 	}
 	return identity.CertificateFromPEM(certificatePEM)
+}
+
+// 获取区块链信息（区块高度等）
+
+func GetBlockchainInfo() (uint64, uint64, error) {
+	_, conn, gw := GetContract()
+	defer conn.Close()
+	defer gw.Close()
+
+	network := gw.GetNetwork("mychannel")
+	qscc := network.GetContract("qscc")
+
+	result, err := qscc.EvaluateTransaction("GetChainInfo", "mychannel")
+	if err != nil {
+		return 0, 0, fmt.Errorf("QSCC查询失败: %w", err)
+	}
+
+	var bcInfo common.BlockchainInfo
+	if err := proto.Unmarshal(result, &bcInfo); err != nil {
+		return 0, 0, fmt.Errorf("解析区块链信息失败: %w", err)
+	}
+
+	return bcInfo.Height, bcInfo.Height - 1, nil
 }

@@ -1,0 +1,4 @@
+FROM hyperledger/fabric-ccenv:2.5.6
+ADD . /chaincode
+WORKDIR /chaincode
+RUN go build -o /chaincode/output .

@@ -30,9 +30,19 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
+
     routes() {
-      return this.$router.options.routes
+      const userType = this.$store.state.user.userType || ''
+      return this.$router.options.routes.filter(r => {
+        // 优先取父路由 meta.roles，没有则取第一个子路由的
+        let roles = (r.meta && r.meta.roles) || []
+        if (roles.length === 0 && r.children && r.children.length > 0) {
+          roles = (r.children[0].meta && r.children[0].meta.roles) || []
+        }
+        return roles.length === 0 || roles.includes(userType)
+      })
     },
+
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

@@ -211,8 +211,12 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_OPERATIONS_LISTENADDRESS=peer0.org1.example.com:9444
       - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org1"}
+#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org1"}
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5.9
+      - CORE_CHAINCODE_RUNTIME=hyperledger/fabric-baseos:2.5.9
+      - CORE_CHAINCODE_EXTERNAL_BUILDERS=[]
+
     volumes:
       - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
       - peer0.org1.example.com:/var/hyperledger/production
@@ -250,8 +254,12 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_OPERATIONS_LISTENADDRESS=peer0.org2.example.com:9445
       - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org2"}
+ #     - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0org2"}
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5.9
+      - CORE_CHAINCODE_RUNTIME=hyperledger/fabric-baseos:2.5.9
+      - CORE_CHAINCODE_EXTERNAL_BUILDERS=[]
+
     volumes:
       - ../organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
       - peer0.org2.example.com:/var/hyperledger/production
