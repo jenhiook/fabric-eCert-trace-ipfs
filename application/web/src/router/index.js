@@ -91,7 +91,7 @@ export const constantRoutes = [
       path: '',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '可视化分析', icon: 'el-icon-data-line', roles: ['个人用户'] }
+      meta: { title: '可视化分析', icon: 'el-icon-data-line',roles: ['个人用户'] }
     }]
   },
   {
@@ -145,7 +145,7 @@ export const constantRoutes = [
       name: 'EnterpriseDashboard',
       component: () => import('@/views/enterprise/Dashboard.vue'),
       meta: { title: '企业可视化', icon: 'el-icon-data-analysis', roles: ['企业组织'] }
-    }]
+   }]
   },
   {
     path: '/enterprise-trace',
@@ -155,7 +155,7 @@ export const constantRoutes = [
       name: 'EnterpriseTrace',
       component: () => import('@/views/enterprise/Trace.vue'),
       meta: { title: '企业溯源', icon: 'el-icon-search', roles: ['企业组织'] }
-    }]
+   }]
   },
   {
     path: '/enterprise-supplier',
@@ -165,7 +165,7 @@ export const constantRoutes = [
       name: 'EnterpriseSupplier',
       component: () => import('@/views/enterprise/SupplierLink.vue'),
       meta: { title: '供应商关联', icon: 'el-icon-connection', roles: ['企业组织'] }
-    }]
+   }]
   },
   {
     path: '/enterprise-event',
@@ -175,7 +175,7 @@ export const constantRoutes = [
       name: 'EnterpriseEvent',
       component: () => import('@/views/enterprise/ComplianceEvent.vue'),
       meta: { title: '合规事件', icon: 'el-icon-warning', roles: ['企业组织'] }
-    }]
+   }]
   },
   {
     path: '/tech-verify',
@@ -185,7 +185,7 @@ export const constantRoutes = [
       name: 'TechVerify',
       component: () => import('@/views/tech/Verify.vue'),
       meta: { title: '核验工具', icon: 'el-icon-check', roles: ['技术支撑实体'] }
-    }]
+   }]
   },
   {
     path: '/tech-dashboard',
@@ -195,7 +195,7 @@ export const constantRoutes = [
       name: 'TechDashboard',
       component: () => import('@/views/tech/Dashboard.vue'),
       meta: { title: '技术可视化', icon: 'el-icon-data-analysis', roles: ['技术支撑实体'] }
-    }]
+   }]
   }
 ]
 

@@ -3,9 +3,9 @@
     <h2 class="title">企业端证照统计分析（我备案的证照）</h2>
 
     <div class="stat-cards-wrapper">
-      <div v-for="card in statCards" :key="card.title" class="stat-card-item">
+      <div class="stat-card-item" v-for="card in statCards" :key="card.title">
         <el-card class="stat-card" shadow="hover">
-          <div class="stat-icon"><i :class="card.icon" /></div>
+          <div class="stat-icon"><i :class="card.icon"></i></div>
           <div class="stat-info">
             <div class="stat-number">{{ card.value }}</div>
             <div class="stat-title">{{ card.title }}</div>
@@ -18,19 +18,19 @@
       <el-col :span="12">
         <el-card class="chart-card">
           <div slot="header">证照阶段分布</div>
-          <div id="stageChart" style="height: 300px" />
+          <div id="stageChart" style="height: 300px"></div>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card class="chart-card">
           <div slot="header">证照种类分布</div>
-          <div id="typeChart" style="height: 300px" />
+          <div id="typeChart" style="height: 300px"></div>
         </el-card>
       </el-col>
     </el-row>
 
     <el-card class="table-card">
-      <div slot="header" />
+      <div slot="header"></div>
       <el-table :data="pagedCertList" border stripe>
         <el-table-column prop="traceability_code" label="溯源码" width="180" />
         <el-table-column prop="farmer_input.fa_fruitName" label="证照类型" />
@@ -156,21 +156,21 @@ export default {
       this.stageChart.setOption({
         tooltip: { trigger: 'item' },
         legend: { top: 'bottom' },
-        series: [{ type: 'pie', radius: '55%', data: stageData, emphasis: { scale: true }}]
+        series: [{ type: 'pie', radius: '55%', data: stageData, emphasis: { scale: true } }]
       })
 
       this.typeChart.setOption({
         tooltip: { trigger: 'axis' },
-        xAxis: { type: 'category', data: Object.keys(this.stats.certTypeDist), axisLabel: { rotate: 30 }},
+        xAxis: { type: 'category', data: Object.keys(this.stats.certTypeDist), axisLabel: { rotate: 30 } },
         yAxis: { type: 'value' },
-        series: [{ type: 'bar', data: Object.values(this.stats.certTypeDist), itemStyle: { borderRadius: [4, 4, 0, 0], color: '#409eff' }}]
+        series: [{ type: 'bar', data: Object.values(this.stats.certTypeDist), itemStyle: { borderRadius: [4,4,0,0], color: '#409eff' } }]
       })
     },
     handlePageChange(page) {
       this.currentPage = page
     },
     viewDetail(row) {
-      this.$router.push({ path: '/trace', query: { code: row.traceability_code }})
+      this.$router.push({ path: '/trace', query: { code: row.traceability_code } })
     }
   }
 }

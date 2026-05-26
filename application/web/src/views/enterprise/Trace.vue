@@ -8,11 +8,11 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="loadHistory">查看历史</el-button>
-        <el-button :disabled="!historyList.length" @click="exportToCSV">导出审计报表</el-button>
+        <el-button @click="exportToCSV" :disabled="!historyList.length">导出审计报表</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="pagedHistoryList" border stripe fit>
+    <el-table :data="pagedHistoryList" border stripe v-loading="loading" fit>
       <el-table-column prop="time" label="时间" width="180" />
       <el-table-column prop="eventType" label="事件类型" width="120" />
       <el-table-column prop="operator" label="操作人" width="120" />
@@ -29,9 +29,9 @@
       :total="total"
       :page-size="limit"
       :current-page.sync="page"
-      style="margin-top:20px; text-align:right;"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
+      style="margin-top:20px; text-align:right;"
     />
   </div>
 </template>
